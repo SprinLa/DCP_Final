@@ -1,0 +1,7 @@
+FROM es
+  
+MAINTAINER wen "yongxuan@staff.weibo.com"  
+
+ADD DCP_Final /data0/
+RUN touch /var/log/1.txt
+CMD python /data0/deploy/ES.py launch && "tail" "-f" "/var/log/1.txt"
