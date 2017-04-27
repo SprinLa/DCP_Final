@@ -1,0 +1,7 @@
+# Pull base image
+FROM readfile
+
+MAINTAINER wen "yongxuan@staff.weibo.com"
+
+RUN touch /var/log/1.txt
+CMD service httpd start && "tail" "-f" "/var/log/1.txt"
