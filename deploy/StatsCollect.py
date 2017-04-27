@@ -73,7 +73,7 @@ def send2es(msg):
 
     msg['container_ip'] = container_ip
 
-    write2es("docker-index", "test2", body=msg)
+    # write2es("docker-index", "test2", body=msg)
 
     logging.info("write2es " + container_name + " stats success")
 

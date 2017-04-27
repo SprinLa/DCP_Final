@@ -1,6 +1,7 @@
 import os
 import logging
 from DBUtil import selectByKey
+import time
 
 NGINX_PATH = "/usr/local/nginx"
 
@@ -16,12 +17,12 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%a, %d %b %Y %H:%M:%S',
                     filename=LOG_FILE_PATH,
                     filemode='a')
-DCP_CONF_PATH = "dcp_conf"
+DCP_CONF_DB = "dcp_conf"
 
 
 def nginx_reload(config):
     logging.info("nginx reload ...")
-    subnet = selectByKey("app_start_network")
+    subnet = selectByKey(DCP_CONF_DB, "app_start_network")
 
     server_list = os.popen("cat " + NGINX_CONFIG_PATH + " | grep  \"server " + subnet + "\"").read()
 
@@ -39,6 +40,7 @@ def nginx_reload(config):
     conf_file_write = open(NGINX_CONFIG_PATH, "w")
     conf_file_write.write(new_lines)
 
+    time.sleep(1)
     command = NGINX_SBIN_PATH + "/nginx -s reload"
     status = os.system(command)
 
@@ -52,8 +54,8 @@ def get_nginx_config(container_dict):
     container_port = "80"
     config = ""
     for container_name in container_dict.keys():
-        config = config + container_dict[container_name] + ":" + container_port + "," + "\n"
-
+        conf = "server " + container_dict[container_name] + ":" + container_port + ";" + "\n"
+        config += conf
     logging.info("current config : " + config)
     return config
 

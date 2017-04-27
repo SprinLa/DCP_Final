@@ -41,8 +41,8 @@ def current_platform_stats():
 
     container_platform_stats = []
 
-    container_platform_stats['mem'] = float(0)
-    container_platform_stats['cpu'] = float(0)
+    # container_platform_stats['mem'] = float(0)
+    # container_platform_stats['cpu'] = float(0)
 
     for name, container in container_stats_list:
         container_platform_stats['mem'] += container.mem_usage_percent
@@ -81,6 +81,7 @@ def falcon():
     status = current_platform_stats()
 
     if len(status) == 0:
+        logging.info("healthy!")
         return
     elif status == "mem_warning":
         logging.warn("mem usage over 0.9!")
@@ -120,7 +121,7 @@ def takeAddStrategy():
     while flag:
         container_dict = {}
 
-        app_container_num = math.pow(2, count)
+        app_container_num = int(math.pow(2, count))
         logging.info("Add " + str(app_container_num) + " containers")
 
         pre_app_container_num = int(selectByKey(DCP_CONF_PATH, "app_container_num"))
@@ -144,7 +145,7 @@ def takeAddStrategy():
 
             container_dict[app_container_name] = app_ip_address
 
-        insert(DCP_CONF_PATH, cur_app_container_num)
+        insert(DCP_CONF_PATH, "app_container_num", str(cur_app_container_num))
         bulk_insert(DCP_DB_PATH, container_dict)
 
         container_dict = selectAll(DCP_DB_PATH)
@@ -171,7 +172,7 @@ def takeReduceStrategy():
     while flag:
         container_list = []
 
-        app_container_num = math.pow(2, count)
+        app_container_num = int(math.pow(2, count))
         logging.info("Reduce " + str(app_container_num) + " containers")
 
         pre_app_container_num = int(selectByKey(DCP_CONF_PATH, "app_container_num"))
@@ -190,7 +191,7 @@ def takeReduceStrategy():
 
             logging.info(app_container_name + " removed")
 
-        insert(DCP_CONF_PATH, cur_app_container_num)
+        insert(DCP_CONF_PATH, "app_container_num", cur_app_container_num)
         bulk_delete(DCP_DB_PATH, container_list)
 
         container_dict = selectAll(DCP_DB_PATH)
