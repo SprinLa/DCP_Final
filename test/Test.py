@@ -4,6 +4,7 @@ from util.DockerUtil import getAllContainers
 import threading
 import time
 import bsddb
+import os
 
 # num = random.randint(10, 20)
 print "aaa"
@@ -30,7 +31,8 @@ if __name__ == '__main__':
     # for t in threads:
     #     t.start()
     # time.sleep(2)
-    do = []
-    print len(do)
-    print len("nen")
-
+    # do = []
+    # print len(do)
+    # print len("nen")
+    cluster_list = os.popen("cat ../conf/dcp_es_cluster.conf").read()
+    print cluster_list

@@ -32,6 +32,7 @@ def createContainers(image, name, ports=None, host_config=None, mem_limit=None, 
                                            mem_limit=mem_limit, detach=True, stdin_open=True, tty=True,
                                            networking_config=networking_config)
     logging.info("create container " + name + " : " + container_id['Id'])
+    os.system("docker start " + container_id['Id'])
     return container_id
 
 

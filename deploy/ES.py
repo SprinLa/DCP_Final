@@ -12,7 +12,7 @@ username = "es"
 version = "2.4.1"
 software_name = "elasticsearch"
 
-path = "/usr/local/elasticsearch-" + version + "/"
+path = "/home/es/elasticsearch-" + version + "/"
 pid_path = "/tmp/elasticsearch-pid"
 
 config_name = "elasticsearch.yml"
@@ -106,7 +106,7 @@ def init():
 
 # discover.list
 def cluster():
-    cluster_list = os.popen("cat ../conf/dcp_es_cluster.conf").read()  #####!!!!!!!
+    cluster_list = os.popen("cat ../conf/dcp_es_cluster.conf").read()
     cluster_list = cluster_list[0:len(cluster_list) - 1]
     cluster_default = os.popen("cat " + path + "config/" + config_name + " | grep " + cluster_config).read()
     cluster_default = cluster_default[0:len(cluster_default) - 1]

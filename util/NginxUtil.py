@@ -1,12 +1,13 @@
 import os
 import logging
+from DBUtil import selectByKey
 
-NGINX_PATH = ""
+NGINX_PATH = "/usr/local/nginx"
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
-NGINX_PATH = ""
-NGINX_CONFIG_PATH = ""
-NGINX_SBIN_PATH = ""
+
+NGINX_CONFIG_PATH = NGINX_PATH + "/conf/nginx.conf"
+NGINX_SBIN_PATH = NGINX_PATH + "/sbin"
 
 os.system("mkdir -p /data0/log")
 
@@ -15,26 +16,30 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%a, %d %b %Y %H:%M:%S',
                     filename=LOG_FILE_PATH,
                     filemode='a')
+DCP_CONF_PATH = "dcp_conf"
 
 
 def nginx_reload(config):
     logging.info("nginx reload ...")
-    SUBNET = ""
+    subnet = selectByKey("app_start_network")
 
-    server_list = os.popen("cat " + NGINX_PATH + " | grep  \"server " + SUBNET + "\"").read()
-    server_list = server_list[0:len(server_list) - 1]
-    server_list_configure = config
-    conf_file = open(NGINX_PATH, 'r')
+    server_list = os.popen("cat " + NGINX_CONFIG_PATH + " | grep  \"server " + subnet + "\"").read()
+
+    conf_file = open(NGINX_CONFIG_PATH, 'r')
     all_lines = conf_file.read()
-
-    new_lines = all_lines.replace(server_list, server_list_configure)
+    if len(server_list) == 0:
+        new_lines = all_lines.replace("upstream localhost{", "upstream localhost{" + "\n" + config)
+    else:
+        server_list = server_list[0:len(server_list) - 1]
+        server_list_configure = config
+        new_lines = all_lines.replace(server_list, server_list_configure)
     logging.info("new host list:" + new_lines)
     # conf_file.write(all_lines)
     conf_file.close()
-    conf_file_write = open(NGINX_PATH, "w")
+    conf_file_write = open(NGINX_CONFIG_PATH, "w")
     conf_file_write.write(new_lines)
 
-    command = NGINX_PATH + " -s reload"
+    command = NGINX_SBIN_PATH + "/nginx -s reload"
     status = os.system(command)
 
     if status == 0:
