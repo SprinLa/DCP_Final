@@ -27,6 +27,11 @@ def createNetwork(name, subnet, gateway):
     return result
 
 
+# remove network
+def remove_network(name):
+    client.remove_network(name)
+
+
 # create containers create_container
 def createContainers(image, name, ports=None, host_config=None, mem_limit=None, networking_config=None):
     container_id = client.create_container(image=image, ports=ports, host_config=host_config, name=name,

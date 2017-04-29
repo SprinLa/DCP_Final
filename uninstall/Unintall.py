@@ -1,8 +1,9 @@
 import logging
 import os
 from util.DBUtil import selectAll, bulk_delete
-from util.DockerUtil import remove_container
+from util.DockerUtil import remove_container,remove_network
 from util.NginxUtil import get_nginx_config, nginx_reload, stop_nginx
+from util.ConfigUtil import Properties
 
 DCP_DB_PATH = "dcp_container"
 DCP_CONF_PATH = "dcp_conf"
@@ -42,6 +43,12 @@ def uninstall():
     for container_name in es_container_list.keys():
         remove_container(container_name)
         logging.info("remove " + container_name)
+
+    # remove network
+    logging.info("start to clear network")
+    dcp_conf = Properties("../conf/dcp_init.conf").getProperties()
+    remove_network(dcp_conf["es.network.name"])
+    remove_network(dcp_conf["app.network.name"])
 
     # delete from db
     bulk_delete(DCP_DB_PATH, app_container_list)
