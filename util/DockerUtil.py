@@ -2,6 +2,7 @@ import docker
 from docker.types.networks import IPAMPool, IPAMConfig
 import logging
 import os
+from DBUtil import selectAll
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
 
@@ -42,7 +43,7 @@ def getImages():
 
 
 def getContainerStat(name):
-    return client.stats(name, False)
+    return client.stats(name, stream=False)
 
 
 # get All containers
@@ -55,7 +56,17 @@ def getAllContainersName():
     container_list = getAllContainers()
     container_name_list = []
     for container in container_list:
-        container_name_list.append(container['container_name'])
+        container_name_list.append(container['Names'][0])
+    return container_name_list
+
+
+# get APP containers from DB
+def getContainersNameFromDB(db_name):
+    container_name_list = []
+    container_name_list_1 = []
+    container_name_list.append(container_name_list_1)
+    for container_name in selectAll(db_name).keys():
+        container_name_list.append(container_name)
     return container_name_list
 
 

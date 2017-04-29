@@ -21,11 +21,11 @@ def getAllContainersPercent():
         # CPU
         cpu_total_usage = container_stats['cpu_stats']['cpu_usage']['total_usage']
         cpu_system_uasge = container_stats['cpu_stats']['system_cpu_usage']
-        cpu_percent = round((float(cpu_total_usage) / float(cpu_system_uasge)) * 100.0, 2)
+        cpu_percent = round((float(cpu_total_usage) / float(cpu_system_uasge)), 10)
         # Memory
         mem_usage = container_stats['memory_stats']['usage']
         mem_limit = container_stats['memory_stats']['limit']
-        mem_percent = round(float(mem_usage) / float(mem_limit) * 100.0, 2)
+        mem_percent = round(float(mem_usage) / float(mem_limit), 10)
         # IP
         container_ip = os.popen("docker inspect --format '{{ .NetworkSettings.IPAddress }}' " + container_name).read()
 
@@ -39,14 +39,12 @@ def current_platform_stats():
     overload_containers = []
     container_stats_list = getAllContainersPercent()
 
-    container_platform_stats = []
+    container_platform_mem_stats = float(0)
+    container_platform_cpu_stats = float(0)
 
-    # container_platform_stats['mem'] = float(0)
-    # container_platform_stats['cpu'] = float(0)
-
-    for name, container in container_stats_list:
-        container_platform_stats['mem'] += container.mem_usage_percent
-        container_platform_stats['cpu'] += container.cpu_usage_percent
+    for container in container_stats_list.values():
+        container_platform_mem_stats += float(container.mem_usage_percent)
+        container_platform_cpu_stats += float(container.cpu_usage_percent)
         if container.mem_usage_percent > 0.9:
             overload_containers.append(container)
         elif container.cpu_usage_percent > 0.9:
@@ -54,25 +52,28 @@ def current_platform_stats():
         else:
             continue
 
-    if container_platform_stats['mem'] / float(len(container_stats_list)) > 0.9:
-        logging.warn("The mem of platform is over 0.9, current is " + container_platform_stats['mem'] / float(
-            len(container_stats_list)))
+    container_platform_cpu_stats_percent = container_platform_cpu_stats / float(len(container_stats_list))
+    container_platform_mem_stats_percent = container_platform_mem_stats / float(len(container_stats_list))
+
+    if container_platform_mem_stats_percent > 0.9:
+        logging.warn("The mem of platform is over 0.9, current is " + str(container_platform_mem_stats / float(
+            len(container_stats_list))))
         return "mem_warning"
 
-    if container_platform_stats['cpu'] / float(len(container_stats_list)) > 0.9:
-        logging.warn("The cpu of platform is over 0.9, current is " + container_platform_stats['cpu'] / float(
-            len(container_stats_list)))
+    if container_platform_cpu_stats_percent > 0.9:
+        logging.warn("The cpu of platform is over 0.9, current is " + str(container_platform_cpu_stats / float(
+            len(container_stats_list))))
         return "cpu_warning"
 
-    if container_platform_stats['mem'] / float(len(container_stats_list)) < 0.5:
-        logging.warn("The mem of platform is over 0.9, current is " + container_platform_stats['mem'] / float(
-            len(container_stats_list)))
-        return "mem_low_warning"
+    if container_platform_mem_stats_percent < 0.5:
+        logging.warn("The mem of platform is less than 0.5, current is " + str(container_platform_mem_stats / float(
+            len(container_stats_list))))
+        # return "mem_low_warning"
 
-    if container_platform_stats['cpu'] / float(len(container_stats_list)) < 0.5:
-        logging.warn("The cpu of platform is over 0.9, current is " + container_platform_stats['cpu'] / float(
-            len(container_stats_list)))
-        return "cpu_low_warning"
+    if container_platform_cpu_stats_percent < 0.5:
+        logging.warn("The cpu of platform is less than 0.5, current is " + str(container_platform_cpu_stats / float(
+            len(container_stats_list))))
+        # return "cpu_low_warning"
 
     return overload_containers
 

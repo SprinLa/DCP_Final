@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from time import sleep
 from util.ESUtil import write2es
-from util.DockerUtil import getAllContainersName, getContainerStat
+from util.DockerUtil import getAllContainersName, getContainersNameFromDB, getContainerStat
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
 
@@ -15,6 +15,9 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%a, %d %b %Y %H:%M:%S',
                     filename=LOG_FILE_PATH,
                     filemode='a')
+
+DCP_DB_PATH = "dcp_container"
+DCP_ES_PATH = "dcp_es"
 
 
 def collect_container_stats(name):
@@ -82,7 +85,10 @@ def executeCollect(interval, thread_num):
     pool = threadpool.ThreadPool(thread_num)
 
     while True:
-        container_name_list = getAllContainersName()
+        # container_name_list = getAllContainersName()
+        container_name_list = getContainersNameFromDB(DCP_DB_PATH)
+        container_name_list.append(getContainersNameFromDB(DCP_ES_PATH))
+
         requests = threadpool.makeRequests(collect_container_stats, container_name_list)
         [pool.putRequest(req) for req in requests]
         pool.wait()
@@ -90,5 +96,7 @@ def executeCollect(interval, thread_num):
 
 
 if __name__ == '__main__':
-    while True:
-        executeCollect(1000, 10)
+    # while True:
+    #     executeCollect(1000, 10)
+    for container_name in getAllContainersName():
+        print getContainerStat(container_name)

@@ -2,8 +2,8 @@ import logging
 import os
 import threading
 from util.ConfigUtil import Properties
-from deploy.StatsCollect import executeCollect
-from deploy.StatsFalcon import executeFalcon
+from StatsCollect import executeCollect
+from StatsFalcon import executeFalcon
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
 

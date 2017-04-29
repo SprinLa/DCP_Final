@@ -46,6 +46,7 @@ def uninstall():
     # delete from db
     bulk_delete(DCP_DB_PATH, app_container_list)
     bulk_delete(ES_DB_PATH, es_container_list)
+
     # nginx stop
     logging.info("start to stop nginx")
     config = get_nginx_config({})
