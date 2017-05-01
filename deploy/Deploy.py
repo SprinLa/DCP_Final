@@ -22,6 +22,8 @@ def deploy():
     collect_interval = int(deploy_conf['es.collect.interval'])
     falcon_interval = int(deploy_conf['es.falcon.interval'])
     thread_num = int(deploy_conf['es.collect.threadNum'])
+    logging.info("create mapping")
+    os.system("python CreateMapping.py")
     logging.info("start")
     t1 = threading.Thread(target=executeCollect, args=(collect_interval, thread_num))
     t2 = threading.Thread(target=executeFalcon, args=(falcon_interval,))

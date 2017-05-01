@@ -1,10 +1,9 @@
 import logging
 import os
 from util.ConfigUtil import Properties
-from util.DockerUtil import createNetwork, createContainers, get_host_config, get_network_config
+from util.DockerUtil import createContainers, get_host_config, get_network_config
 from util.DBUtil import bulk_insert, insert
 from util.NginxUtil import get_nginx_config, nginx_reload
-from util.ESUtil import createMapping
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
 
