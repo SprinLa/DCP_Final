@@ -1,8 +1,13 @@
 from elasticsearch import Elasticsearch
 import os
 import logging
+from ConfigUtil import Properties
 
-es = Elasticsearch([{'host': '172.17.0.11', 'port': 9200}])
+
+dcp_init_config = Properties("../conf/dcp_init.conf").getProperties()
+network_list = dcp_init_config["es.network.cluster"]
+
+es = Elasticsearch([{'host': network_list, 'port': 9200}])
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
 
@@ -31,7 +36,7 @@ def createMapping():
 
     logging.info("current index_mapping : \n" + request_mapping)
 
-    status = es.indices.create(index="docker-test-mapping", ignore=400, body=request_mapping)
+    status = es.indices.create(index="docker-test", ignore=400, body=request_mapping)
 
     logging.info(status)
 
@@ -42,4 +47,5 @@ def write2es(index="docker-test", doc_type="test", body=""):
 
 
 if __name__ == '__main__':
-    logging.info("ESUtil")
+    dcp_init_config = Properties("../conf/dcp_init.conf").getProperties()
+    network_list = dcp_init_config["es.network.cluster"]

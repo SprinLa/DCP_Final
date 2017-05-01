@@ -4,6 +4,7 @@ from util.ConfigUtil import Properties
 from util.DockerUtil import createNetwork, createContainers, get_host_config, get_network_config
 from util.DBUtil import bulk_insert, insert
 from util.NginxUtil import get_nginx_config, nginx_reload
+from util.ESUtil import createMapping
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
 
@@ -85,7 +86,7 @@ def init():
 
     bulk_insert(DCP_DB_PATH, app_container_dict)
     bulk_insert(ES_DB_PATH, es_container_dict)
-
+    createMapping()
     config = get_nginx_config(app_container_dict)
     nginx_reload(config)
 
