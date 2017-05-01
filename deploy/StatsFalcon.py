@@ -56,6 +56,9 @@ def current_platform_stats():
     container_platform_cpu_stats_percent = container_platform_cpu_stats / float(len(container_stats_list))
     container_platform_mem_stats_percent = container_platform_mem_stats / float(len(container_stats_list))
 
+    print "current cpu:" + str(container_platform_cpu_stats_percent)
+    print "current mem:" + str(container_platform_mem_stats_percent)
+
     if container_platform_mem_stats_percent > 0.9:
         logging.warn("The mem of platform is over 0.9, current is " + str(container_platform_mem_stats / float(
             len(container_stats_list))))
@@ -154,6 +157,7 @@ def takeAddStrategy():
 
         config = get_nginx_config(container_dict)
         nginx_reload(config)
+        os.system("/usr/local/nginx/sbin/nginx -s reload")
 
         time.sleep(1000)
 
@@ -200,6 +204,7 @@ def takeReduceStrategy():
 
         config = get_nginx_config(container_dict)
         nginx_reload(config)
+        os.system("/usr/local/nginx/sbin/nginx -s reload")
 
         time.sleep(1000)
 

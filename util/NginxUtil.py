@@ -41,13 +41,6 @@ def nginx_reload(config):
     conf_file_write.write(new_lines)
 
     time.sleep(1)
-    command = NGINX_SBIN_PATH + "/nginx -s reload"
-    status = os.system(command)
-
-    if status == 0:
-        print "nginx reload success"
-    else:
-        print "nginx reload failed"
 
 
 def get_nginx_config(container_dict):

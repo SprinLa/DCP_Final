@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 def deploy():
     deploy_conf = Properties("../conf/dcp_deploy.conf").getProperties()
+    os.system("/usr/local/nginx/sbin/nginx -s reload")
 
     collect_interval = int(deploy_conf['es.collect.interval'])
     falcon_interval = int(deploy_conf['es.falcon.interval'])
