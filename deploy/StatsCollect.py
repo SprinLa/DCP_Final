@@ -87,7 +87,7 @@ def executeCollect(interval, thread_num):
     while True:
         # container_name_list = getAllContainersName()
         container_name_list = getContainersNameFromDB(DCP_DB_PATH)
-        container_name_list.append(getContainersNameFromDB(DCP_ES_PATH))
+        container_name_list += getContainersNameFromDB(DCP_ES_PATH)
 
         requests = threadpool.makeRequests(collect_container_stats, container_name_list)
         [pool.putRequest(req) for req in requests]
@@ -100,3 +100,6 @@ if __name__ == '__main__':
     #     executeCollect(1000, 10)
     for container_name in getAllContainersName():
         print getContainerStat(container_name)
+    container_name_list = getContainersNameFromDB(DCP_DB_PATH)
+    container_name_list += getContainersNameFromDB(DCP_ES_PATH)
+    print container_name_list

@@ -6,14 +6,15 @@ from util.DockerUtil import getAllContainersName, getContainerStat, createContai
     get_network_config, remove_container, restart_container
 from util.DBUtil import selectByKey, bulk_insert, insert, selectAll, bulk_delete
 from util.NginxUtil import get_nginx_config, nginx_reload
-from util.DockerUtil import Container_status
+from util.DockerUtil import Container_status, getContainersNameFromDB
 
 DCP_DB_PATH = "dcp_container"
 DCP_CONF_PATH = "dcp_conf"
 
 
 def getAllContainersPercent():
-    container_list = getAllContainersName()
+    container_list = getContainersNameFromDB(DCP_DB_PATH)
+    logging.info("current containers in falcon " + container_list)
     container_stats_list = {}
 
     for container_name in container_list:
