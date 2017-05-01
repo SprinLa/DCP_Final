@@ -48,8 +48,6 @@ def getImages():
 
 
 def getContainerStat(name):
-    if len(name) == 0:
-        return
     return client.stats(name, stream=False)
 
 
