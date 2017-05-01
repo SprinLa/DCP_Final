@@ -86,7 +86,6 @@ def init():
 
     bulk_insert(DCP_DB_PATH, app_container_dict)
     bulk_insert(ES_DB_PATH, es_container_dict)
-    createMapping()
     config = get_nginx_config(app_container_dict)
     nginx_reload(config)
 

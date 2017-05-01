@@ -20,27 +20,6 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='a')
 
 
-def createMapping():
-    request_mapping = ""
-
-    try:
-        mapping_file = open("../conf/ES_mapping.json")
-        for line in mapping_file.readlines():
-            request_mapping += line
-    except Exception, e:
-        logging.error(e)
-        raise e
-
-    else:
-        mapping_file.close()
-
-    logging.info("current index_mapping : \n" + request_mapping)
-
-    status = es.indices.create(index="docker-test", ignore=400, body=request_mapping)
-
-    logging.info(status)
-
-
 def write2es(index="docker-test", doc_type="test", body=""):
     result = es.index(index, doc_type, body)
     logging.info(result)
