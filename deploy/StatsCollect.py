@@ -43,7 +43,7 @@ def collect_container_stats(name):
     # StateTime
     invoke_time = container_stats['read']
     # pids
-    pid_nums = container_stats["pids_stats"]
+    pid_nums = container_stats["pids_stats"]['current']
     # collect_time=str(new_result['read'].split('.')[0].split('T')[0])+' '+str(new_result['read'].split('.')[0].split('T')[1])
     msg = {
         'container_name': name,
@@ -74,7 +74,7 @@ def send2es(msg):
 
     container_ip = os.popen("docker inspect --format '{{ .NetworkSettings.IPAddress }}' " + container_name).read()
 
-    msg['cal_time'] = cal_time
+    msg['cal_time'] = cal_time.strftime('%Y-%m-%dT%H:%M:%S+08:00')
 
     msg['container_ip'] = container_ip
 

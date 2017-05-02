@@ -115,5 +115,6 @@ class Container_status(object):
 
 if __name__ == '__main__':
     # logging.info("DockerUtil")
-    print getContainerStat('ad')
+    container = getContainerStat('storm')
+    print container["pids_stats"]['current']
     print getAllContainers()
