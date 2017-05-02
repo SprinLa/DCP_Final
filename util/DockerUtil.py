@@ -68,8 +68,6 @@ def getAllContainersName():
 # get APP containers from DB
 def getContainersNameFromDB(db_name):
     container_name_list = []
-    container_name_list_1 = []
-    container_name_list.append(container_name_list_1)
     for container_name in selectAll(db_name).keys():
         container_name_list.append(container_name)
     return container_name_list

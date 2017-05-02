@@ -86,10 +86,7 @@ def executeCollect(interval, thread_num):
 
     while True:
         # container_name_list = getAllContainersName()
-        container_name_list = []
-        for container_name in getContainersNameFromDB(DCP_DB_PATH):
-            if len(container_name) != 0:
-                container_name_list.append(container_name)
+        container_name_list = getContainersNameFromDB(DCP_DB_PATH)
 
         for container_name in getContainersNameFromDB(DCP_ES_PATH):
             if len(container_name) != 0:
