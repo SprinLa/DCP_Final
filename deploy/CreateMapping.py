@@ -103,6 +103,6 @@ REQUEST_MAPPING = {
     }
 }
 
-status = es.indices.create(index="docker-test-mapping", ignore=400, body=REQUEST_MAPPING)
+status = es.indices.create(index="docker-index", ignore=400, body=REQUEST_MAPPING)
 
 print status
