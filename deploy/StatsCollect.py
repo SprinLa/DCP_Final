@@ -22,6 +22,8 @@ DCP_ES_PATH = "dcp_es"
 
 def collect_container_stats(name):
     container_stats = getContainerStat(name)
+    if container_stats is None:
+        return
     # CPU
     cpu_total_usage = container_stats['cpu_stats']['cpu_usage']['total_usage']
     cpu_system_uasge = container_stats['cpu_stats']['system_cpu_usage']

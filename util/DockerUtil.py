@@ -48,7 +48,10 @@ def getImages():
 
 
 def getContainerStat(name):
-    return client.stats(name, stream=False)
+    try:
+        return client.stats(name, stream=False)
+    except:
+        return None
 
 
 # get All containers
@@ -112,5 +115,5 @@ class Container_status(object):
 
 if __name__ == '__main__':
     # logging.info("DockerUtil")
-    print getContainerStat('fcf9fcec93c1')
+    print getContainerStat('ad')
     print getAllContainers()

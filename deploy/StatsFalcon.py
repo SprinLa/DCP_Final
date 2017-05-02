@@ -2,14 +2,13 @@ import logging
 import os
 import time
 import math
-from util.DockerUtil import getAllContainersName, getContainerStat, createContainers, get_host_config, \
+from util.DockerUtil import getContainerStat, createContainers, get_host_config, \
     get_network_config, remove_container, restart_container
 from util.DBUtil import selectByKey, bulk_insert, insert, selectAll, bulk_delete
 from util.NginxUtil import get_nginx_config, nginx_reload
 from util.DockerUtil import Container_status, getContainersNameFromDB
-import logging
 
-LOG_FILE_PATH = '/data0/log/DCP_Falcon.log'
+LOG_FILE_PATH = '/data0/log/DCP.log'
 
 os.system("mkdir -p /data0/log")
 
@@ -85,11 +84,6 @@ def current_platform_stats():
             len(container_stats_list))))
         return "mem_low_warning"
 
-    if container_platform_cpu_stats_percent < 0.5:
-        logging.warn("The cpu of platform is less than 0.5, current is " + str(container_platform_cpu_stats / float(
-            len(container_stats_list))))
-        return "cpu_low_warning"
-
     return overload_containers
 
 
@@ -107,9 +101,6 @@ def falcon():
         takeAddStrategy()
     elif status == "mem_low_warning":
         logging.warn("mem usage under 0.5!")
-        takeReduceStrategy()
-    elif status == "cpu_low_warning":
-        logging.warn("cpu_usage under 0.5!")
         takeReduceStrategy()
     else:
         logging.warn(str(status) + " need to adjust!")
@@ -221,7 +212,7 @@ def takeReduceStrategy():
         time.sleep(3)
 
         status = current_platform_stats()
-        if status == "mem_low_warning" or status == "cpu_low_warnning":
+        if status == "mem_low_warning":
             count += 1
             continue
         else:
