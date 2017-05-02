@@ -171,7 +171,7 @@ def takeAddStrategy():
         os.system("/usr/local/nginx/sbin/nginx -s reload")
         logging.info("nginx reload success")
 
-        time.sleep(1)
+        time.sleep(3)
 
         status = current_platform_stats()
         if status == "mem_warning" or status == "cpu_warning":
@@ -204,8 +204,8 @@ def takeReduceStrategy():
         for i in range(cur_app_container_num, pre_app_container_num):
             app_container_name = "APP-" + str(i)
             #  remove container
-            remove_container(app_container_num)
-            container_list.append(app_container_num)
+            remove_container(app_container_name)
+            container_list.append(app_container_name)
 
             logging.info(app_container_name + " removed")
 
@@ -218,7 +218,7 @@ def takeReduceStrategy():
         nginx_reload(config)
         os.system("/usr/local/nginx/sbin/nginx -s reload")
 
-        time.sleep(1000)
+        time.sleep(3)
 
         status = current_platform_stats()
         if status == "mem_low_warning" or status == "cpu_low_warnning":
