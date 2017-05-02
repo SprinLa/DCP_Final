@@ -83,12 +83,12 @@ def current_platform_stats():
     if container_platform_mem_stats_percent < 0.5:
         logging.warn("The mem of platform is less than 0.5, current is " + str(container_platform_mem_stats / float(
             len(container_stats_list))))
-        # return "mem_low_warning"
+        return "mem_low_warning"
 
     if container_platform_cpu_stats_percent < 0.5:
         logging.warn("The cpu of platform is less than 0.5, current is " + str(container_platform_cpu_stats / float(
             len(container_stats_list))))
-        # return "cpu_low_warning"
+        return "cpu_low_warning"
 
     return overload_containers
 
@@ -113,7 +113,7 @@ def falcon():
         takeReduceStrategy()
     else:
         logging.warn(str(status) + " need to adjust!")
-        balance(status)
+        # balance(status)
 
 
 def balance(overload_containers):
