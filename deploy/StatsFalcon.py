@@ -7,6 +7,17 @@ from util.DockerUtil import getAllContainersName, getContainerStat, createContai
 from util.DBUtil import selectByKey, bulk_insert, insert, selectAll, bulk_delete
 from util.NginxUtil import get_nginx_config, nginx_reload
 from util.DockerUtil import Container_status, getContainersNameFromDB
+import logging
+
+LOG_FILE_PATH = '/data0/log/DCP_Falcon.log'
+
+os.system("mkdir -p /data0/log")
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    filename=LOG_FILE_PATH,
+                    filemode='a')
 
 DCP_DB_PATH = "dcp_container"
 DCP_CONF_PATH = "dcp_conf"
@@ -14,7 +25,7 @@ DCP_CONF_PATH = "dcp_conf"
 
 def getAllContainersPercent():
     container_list = getContainersNameFromDB(DCP_DB_PATH)
-    logging.info("current containers in falcon " + container_list)
+    logging.info("current containers in falcon " + str(container_list))
     container_stats_list = {}
 
     for container_name in container_list:
@@ -30,7 +41,7 @@ def getAllContainersPercent():
         # IP
         container_ip = os.popen("docker inspect --format '{{ .NetworkSettings.IPAddress }}' " + container_name).read()
 
-        container = Container_status(container_name, cpu_percent, mem_percent, container_ip)
+        container = Container_status(container_name, mem_percent, cpu_percent, container_ip)
         container_stats_list[container_name] = container
 
     return container_stats_list
@@ -101,7 +112,7 @@ def falcon():
         logging.warn("cpu_usage under 0.5!")
         takeReduceStrategy()
     else:
-        logging.warn(status + " need to adjust!")
+        logging.warn(str(status) + " need to adjust!")
         balance(status)
 
 
@@ -142,7 +153,7 @@ def takeAddStrategy():
             if host_num > 255:
                 logging.warn("Add container failed,this subnet is full")
                 return
-            app_ip_address = app_start_network + str(host_num)
+            app_ip_address = app_start_network + "." + str(host_num)
             app_network_config = get_network_config(app_network_name, app_ip_address)
 
             createContainers(image=app_container_image, name=app_container_name,
@@ -158,11 +169,12 @@ def takeAddStrategy():
         config = get_nginx_config(container_dict)
         nginx_reload(config)
         os.system("/usr/local/nginx/sbin/nginx -s reload")
+        logging.info("nginx reload success")
 
-        time.sleep(1000)
+        time.sleep(1)
 
         status = current_platform_stats()
-        if status == "mem_warning" or status == "cpu_warnning":
+        if status == "mem_warning" or status == "cpu_warning":
             count += 1
             continue
         else:

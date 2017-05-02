@@ -45,8 +45,8 @@ def init():
     insert(DCP_CONF_PATH, "app_container_mem", app_container_mem)
     insert(DCP_CONF_PATH, "app_network_name", app_network_name)
     # create network !!!!!
-    # createNetwork(es_network_name, es_network_subnet, es_network_gateway)
-    # createNetwork(app_network_name, app_network_subnet, app_network_gateway)
+    createNetwork(es_network_name, es_network_subnet, es_network_gateway)
+    createNetwork(app_network_name, app_network_subnet, app_network_gateway)
     # insert into db how many app containers
     insert(DCP_CONF_PATH, "app_container_num", str(app_container_num))
     # get APP containers IPs
