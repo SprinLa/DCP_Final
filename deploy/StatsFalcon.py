@@ -7,6 +7,7 @@ from util.DockerUtil import getContainerStat, createContainers, get_host_config,
 from util.DBUtil import selectByKey, bulk_insert, insert, selectAll, bulk_delete
 from util.NginxUtil import get_nginx_config, nginx_reload
 from util.DockerUtil import Container_status, getContainersNameFromDB
+from util.ConfigUtil import Properties
 
 LOG_FILE_PATH = '/data0/log/DCP.log'
 
@@ -20,6 +21,10 @@ logging.basicConfig(level=logging.DEBUG,
 
 DCP_DB_PATH = "dcp_container"
 DCP_CONF_PATH = "dcp_conf"
+
+DCP_DEPLOY_CONF = Properties("../conf/dcp_deploy.conf").getProperties()
+DCP_MAX_OVERLOAD = DCP_DEPLOY_CONF["dcp.max.overload"]
+DCP_MIN_OVERLOAD = DCP_DEPLOY_CONF["dcp.min.overload"]
 
 
 def getAllContainersPercent():
@@ -56,9 +61,9 @@ def current_platform_stats():
     for container in container_stats_list.values():
         container_platform_mem_stats += float(container.mem_usage_percent)
         container_platform_cpu_stats += float(container.cpu_usage_percent)
-        if container.mem_usage_percent > 0.9:
+        if container.mem_usage_percent > float(DCP_MAX_OVERLOAD):
             overload_containers.append(container)
-        elif container.cpu_usage_percent > 0.9:
+        elif container.cpu_usage_percent > float(DCP_MIN_OVERLOAD):
             overload_containers.append(container)
         else:
             continue
@@ -69,19 +74,22 @@ def current_platform_stats():
     print "current cpu:" + str(container_platform_cpu_stats_percent)
     print "current mem:" + str(container_platform_mem_stats_percent)
 
-    if container_platform_mem_stats_percent > 0.9:
-        logging.warn("The mem of platform is over 0.9, current is " + str(container_platform_mem_stats / float(
-            len(container_stats_list))))
+    if container_platform_mem_stats_percent > float(DCP_MAX_OVERLOAD):
+        logging.warn("The mem of platform is over " + DCP_MAX_OVERLOAD + ", current is " + str(
+            container_platform_mem_stats / float(
+                len(container_stats_list))))
         return "mem_warning"
 
-    if container_platform_cpu_stats_percent > 0.9:
-        logging.warn("The cpu of platform is over 0.9, current is " + str(container_platform_cpu_stats / float(
-            len(container_stats_list))))
+    if container_platform_cpu_stats_percent > float(DCP_MAX_OVERLOAD):
+        logging.warn("The cpu of platform is over " + DCP_MAX_OVERLOAD + ", current is " + str(
+            container_platform_cpu_stats / float(
+                len(container_stats_list))))
         return "cpu_warning"
 
-    if container_platform_mem_stats_percent < 0.5:
-        logging.warn("The mem of platform is less than 0.5, current is " + str(container_platform_mem_stats / float(
-            len(container_stats_list))))
+    if container_platform_mem_stats_percent < float(DCP_MIN_OVERLOAD):
+        logging.warn("The mem of platform is less than " + DCP_MIN_OVERLOAD + ", current is " + str(
+            container_platform_mem_stats / float(
+                len(container_stats_list))))
         return "mem_low_warning"
 
     return overload_containers
@@ -94,13 +102,13 @@ def falcon():
         logging.info("healthy!")
         return
     elif status == "mem_warning":
-        logging.warn("mem usage over 0.9!")
+        logging.warn("mem usage over " + DCP_MAX_OVERLOAD + "!")
         takeAddStrategy()
     elif status == "cpu_warning":
-        logging.warn("cpu_usage over 0.9!")
+        logging.warn("cpu_usage over " + DCP_MAX_OVERLOAD + "!")
         takeAddStrategy()
     elif status == "mem_low_warning":
-        logging.warn("mem usage under 0.5!")
+        logging.warn("mem usage under " + DCP_MIN_OVERLOAD + "!")
         takeReduceStrategy()
     else:
         logging.warn(str(status) + " need to adjust!")
