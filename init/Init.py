@@ -69,22 +69,22 @@ def init():
                          networking_config=app_network_config)
 
         app_container_dict[app_container_name] = app_ip_address
-    # get ES_cluster IPs
-    es_network_cluster = str(init_conf['es.network.cluster']).split(",")
-    # create ES_cluster
-    for i in range(0, es_container_num):
-        es_container_name = "ES-" + str(i)
-        # publish ports 9200/tcp 9300/tcp
-        es_host_config = get_host_config(ports={9200: None, 9300: None})
-        es_ip_address = es_network_cluster[i]
-        es_network_config = get_network_config(es_network_name, es_ip_address)
-        createContainers(image=es_image_name, name=es_container_name, host_config=es_host_config,
-                         networking_config=es_network_config)
-
-        es_container_dict[es_container_name] = es_ip_address
+    # # get ES_cluster IPs
+    # es_network_cluster = str(init_conf['es.network.cluster']).split(",")
+    # # create ES_cluster
+    # for i in range(0, es_container_num):
+    #     es_container_name = "ES-" + str(i)
+    #     # publish ports 9200/tcp 9300/tcp
+    #     es_host_config = get_host_config(ports={9200: None, 9300: None})
+    #     es_ip_address = es_network_cluster[i]
+    #     es_network_config = get_network_config(es_network_name, es_ip_address)
+    #     createContainers(image=es_image_name, name=es_container_name, host_config=es_host_config,
+    #                      networking_config=es_network_config)
+    #
+    #     es_container_dict[es_container_name] = es_ip_address
 
     bulk_insert(DCP_DB_PATH, app_container_dict)
-    bulk_insert(ES_DB_PATH, es_container_dict)
+    # bulk_insert(ES_DB_PATH, es_container_dict)
     config = get_nginx_config(app_container_dict)
     nginx_reload(config)
 
