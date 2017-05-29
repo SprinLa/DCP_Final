@@ -50,10 +50,12 @@ REQUEST_MAPPING = {
             "properties": {
                 "container_ip": {
                     "type": "string",
+                    "index": "not_analyzed",
                     "null_value": "NULL"
                 },
                 "container_name": {
                     "type": "string",
+                    "index": "not_analyzed",
                     "null_value": "NULL"
                 },
                 "timestamp": {
