@@ -64,6 +64,9 @@ REQUEST_MAPPING = {
                 "invoke_time": {
                     "type": "date"
                 },
+                "cal_time": {
+                    "type": "date"
+                },
                 "network_tx_packets": {
                     "type": "long"
                 },
